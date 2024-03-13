@@ -10,6 +10,36 @@ const {
   destroyUserSkill,
 } = require('./db');
 
+const express = require('express');
+const app = express();
+
+//get the skills
+app.get('/api/skills', async (req, res, next) => {
+  try {
+    res.send(await fetchSkills());
+  } catch (er) {
+    next(er);
+  }
+});
+
+//get the users
+app.get('/api/users', async (req, res, next) => {
+  try {
+    res.send(await fetchUsers());
+  } catch (er) {
+    next(er);
+  }
+});
+
+//get users skills
+app.get('/api/users/:id/userSkills', async (req, res, next) => {
+  try {
+    res.send(await fetchUserSkills(req.params.id));
+  } catch (er) {
+    next(er);
+  }
+});
+
 const init = async () => {
   console.log('connecting to database');
   await client.connect();
@@ -38,6 +68,14 @@ const init = async () => {
   await destroyUserSkill(lucyBartends);
 
   console.log(await fetchUserSkills(lucy.id));
+
+  const port = process.env.PORT || 3001;
+  app.listen(port, () => {
+    console.log(`listening on port ${port}`);
+    console.log(`curl localhost:${port}/api/skills`);
+    console.log(`curl localhost:${port}/api/users`);
+    console.log(`curl localhost:${port}/api/users/${lucy.id}/userSkills`);
+  });
 };
 
 init();
