@@ -40,6 +40,16 @@ app.get('/api/users/:id/userSkills', async (req, res, next) => {
   }
 });
 
+//delete users skill
+app.delete('/api/users/:userId/userSkills/:id', async (req, res, next) => {
+  try {
+    await deleteUserSkill({ id: req.params.id, user_id: req.params.userId });
+    res.sendStatus(204);
+  } catch (er) {
+    next(er);
+  }
+});
+
 const init = async () => {
   console.log('connecting to database');
   await client.connect();
@@ -75,6 +85,9 @@ const init = async () => {
     console.log(`curl localhost:${port}/api/skills`);
     console.log(`curl localhost:${port}/api/users`);
     console.log(`curl localhost:${port}/api/users/${lucy.id}/userSkills`);
+    console.log(
+      `curl -X DELETE localhost:${port}/api/users/${lucy.id}/userSkills/${lucyYodels.id}`
+    );
   });
 };
 
