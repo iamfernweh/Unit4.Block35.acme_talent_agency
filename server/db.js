@@ -94,6 +94,7 @@ const fetchUserSkills = async (user_id) => {
   return response.rows;
 };
 
+//destroy user skill
 const destroyUserSkill = async ({ user_id, id }) => {
   const SQL = `
     DELETE FROM user_skills
