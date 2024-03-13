@@ -1,8 +1,11 @@
 const pg = require('pg');
+const uuid = require('uuid');
 
 const client = new pg.Client(
   process.env.DATABASE_URL || 'postgres://localhost/acme_talent_db'
 );
+
+//create Tables
 const createTables = async () => {
   const SQL = `
     DROP TABLE IF EXISTS user_skills;
@@ -25,8 +28,30 @@ const createTables = async () => {
     `;
   await client.query(SQL);
 };
+//Create User
+const createUser = async ({ username, password }) => {
+  const SQL = `
+        INSERT into users(id, username, password)
+        VALUES($1, $2, $3)
+        RETURNING *
+    `;
+  const response = await client.query(SQL, [uuid.v4(), username, password]);
+  return response.rows[0];
+};
+
+//fetch users
+const fetchUsers = async () => {
+  const SQL = `
+          SELECT *
+          FROM users
+      `;
+  const response = await client.query(SQL);
+  return response.rows;
+};
 
 module.exports = {
   client,
   createTables,
+  createUser,
+  fetchUsers,
 };
